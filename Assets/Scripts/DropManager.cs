@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class DropManager : MonoBehaviour
@@ -22,11 +23,12 @@ public class DropManager : MonoBehaviour
     {
         camera.transform.position = new Vector3(0, CamYOffset, -10);
         game = new Tetris(InitSequence());
-        StartCoroutine(Play(game.CalculateDrops()));
+        game.CalculateDrops();
+        StartCoroutine(Play(game.drops));
     }
     private byte[] InitSequence()
     {
-        byte[] result = new byte[1000];
+        byte[] result = new byte[10];
         for (int i = 0; i < result.Length; i++)
         {
             result[i] = (byte)Random.Range(0, 7);
@@ -41,6 +43,7 @@ public class DropManager : MonoBehaviour
             droppingPiece.transform.localPosition = Vector3.MoveTowards(droppingPiece.transform.localPosition, dropTarget, speed);
             if (droppingPiece.transform.localPosition == dropTarget)
             {
+                droppingPiece.transform.GetChild(4).SetParent(transform);
                 Destroy(droppingPiece.gameObject);
                 droppingPiece = null;
             }
@@ -61,9 +64,11 @@ public class DropManager : MonoBehaviour
 
     private IEnumerator Play(PieceDrop[] sequence)
     {
+        int k = 0;
         foreach (var drop in sequence)
         {
-            Drop(drop);
+            Drop(drop, game.points[k]);
+            k++;
             Color pieceColor = droppingPiece.transform.GetChild(0).GetComponent<SpriteRenderer>().color;
             yield return new WaitUntil(() => droppingPiece == null);
             // insert piece into map
@@ -110,7 +115,7 @@ public class DropManager : MonoBehaviour
 
         Debug.Log("FINISHED with score: <color=yellow>" + score + "</color>");
     }
-    private void Drop(PieceDrop drop)
+    private void Drop(PieceDrop drop, float points)
     {
         TetrisPiece rotated = new TetrisPiece(game[drop.Piece], drop.Orientation);
         droppingPiece = Instantiate(piecePrefabs[drop.Piece], transform);
@@ -127,6 +132,7 @@ public class DropManager : MonoBehaviour
         {
             square.Translate((Vector2)(-min), Space.World);
         }
+        droppingPiece.transform.GetChild(4).GetComponent<TextMeshPro>().text = points.ToString();
         // -----------------------------
         byte[] mins = rotated.MinSolids();
 
