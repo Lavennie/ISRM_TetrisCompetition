@@ -57,27 +57,29 @@ public class Tetris
         {
             float score = 0;
             PreferedSpot p = piece.GetPreference(i);
+            bool leftOk = true;
             for (int j = 0; j < p.left.Length; j++)
             {
-                if (p.left[j] == GetSurface((byte)(column + j)))
+                if (p.left[j] != GetSurface((byte)(column + j)))
                 {
-                    score += (piece.PreferenceCount - i) / p.left.Length;
+                    leftOk = false;
+                    //score += (piece.PreferenceCount - i) / p.left.Length;
                 }
             }
+            bool rightOk = true;
             for (byte j = 0; j < p.right.Length; j++)
             {
-                if (p.right[j] == GetSurface((byte)(column + j + 1)))
+                if (p.right[j] != GetSurface((byte)(column + j + 1)))
                 {
-                    score += (piece.PreferenceCount - i) / p.right.Length;
+                    rightOk = false;
+                    //score += (piece.PreferenceCount - i) / p.right.Length;
                 }
             }
-            if(score >= 0)
+            if (rightOk && rightOk) { score += piece.PreferenceCount - i; }
+            if (score >= 0 && score > maxScore)
             {
-                if(score > maxScore)
-                {
-                    maxScore = score;
-                    pref = p;
-                }
+                maxScore = score;
+                pref = p;
             }
         }
         orientation = pref.orientation;
@@ -144,7 +146,6 @@ public class Tetris
                     bestScore = score;
                 }
             }
-            Debug.Log(i + ":" + sequence[i] + " = " + string.Join(", ", scores));
             points[i] = bestScore;
             Drop(i, new PieceDrop(sequence[i], bestOrientation, bestColumn));
         }
