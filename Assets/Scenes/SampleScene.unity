@@ -13092,12 +13092,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 940200711}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d93c4030290c6fe4f9cc6c39345c3aef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  file: {fileID: 4900000, guid: e76ee018b36cb6e41b04436d3cf5959b, type: 3}
+  sequenceSource: {fileID: 4900000, guid: 01d1fd0d2d979e342865dde8013605eb, type: 3}
   grid: {fileID: 26087415}
   squarePrefab: {fileID: 2784117467876322206, guid: 3419b8f5c74521e4ebdb7f08911d8525, type: 3}
   piecePrefabs:
@@ -13111,12 +13111,11 @@ MonoBehaviour:
   camera: {fileID: 519420031}
   cameraSpeed: 0.8
   speed: 10
-  correctShape: 4
-  badShape: -2
-  sideShape: 1
-  clearLine: 3
-  coverHole: -3
-  height: -4
+  correctShape: 2.5
+  badShape: -3.25
+  sideShape: 1.25
+  clearLine: 3.75
+  height: -2.5
   res: 
 --- !u!4 &940200713
 Transform:
@@ -13139,11 +13138,17 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 940200711}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e87590b23c9bb8b4cbb7dd0ba71d677a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sequenceSource: {fileID: 4900000, guid: 8e069997d3fa84c47be55120870d22d3, type: 3}
+  correctShape: 2.5
+  badShape: -3.25
+  sideShape: 1.25
+  clearLine: 3.75
+  height: -2.5
 --- !u!1 &955765054
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,11 +7,11 @@ using UnityEngine;
 
 public class DropManager : MonoBehaviour
 {
-    public TextAsset file;
+    public TextAsset sequenceSource;
     public Transform grid;
     public GameObject squarePrefab;
     public GameObject[] piecePrefabs;
-    public Camera camera;
+    new public Camera camera;
     [Range(0.0f, 20.0f)]
     public float cameraSpeed = 1.0f;
     [Range(0.0f, 10.0f)]
@@ -22,7 +22,6 @@ public class DropManager : MonoBehaviour
     public float badShape = -5.0f;
     public float sideShape = 0.25f;
     public float clearLine = 3.0f;
-    public float coverHole = -3.0f;
     public float height = -1.5f;
 
     private Tetris game;
@@ -39,15 +38,16 @@ public class DropManager : MonoBehaviour
     public List<int> res = new List<int>();
     public List<float[]> resParams = new List<float[]>();
 
-    private void Awake()
+    private void Start()
     {
         sequence = InitSequence();
-        correctShape = -5.0f;
+
+        /*correctShape = -5.0f;
         badShape = -5.0f;
         sideShape = -5.0f;
         clearLine = -5.0f;
-        coverHole = -5.0f;
-        height = -5.0f;
+        height = -5.0f;*/
+        //1,-1,0.25,1,-1
         Play();
     }
 
@@ -73,16 +73,30 @@ public class DropManager : MonoBehaviour
 
         game = new Tetris(sequence, correctShape, badShape, sideShape, clearLine, height);
         game.CalculateDrops();
+        Debug.Log("<color=magenta>" + $"{game.MaxHeight},{correctShape},{badShape},{sideShape},{clearLine},{height}" + "</color>");
         playing = StartCoroutine(Play(game.drops));
     }
     private byte[] InitSequence()
     {
-        byte[] result = new byte[1000];
-        for (int i = 0; i < result.Length; i++)
+        if (sequenceSource != null)
         {
-            result[i] = (byte)Random.Range(0, 7);
+            string[] lines = sequenceSource.text.Split('\n');
+            byte[] result = new byte[lines.Length - ((string.IsNullOrEmpty(lines[lines.Length - 1])) ? 1 : 0)];
+            for (int i = 0; i < result.Length - 1; i++)
+            {
+                result[i] = byte.Parse(lines[i]);
+            }
+            return result;
         }
-        return result;
+        else
+        {
+            byte[] result = new byte[1000];
+            for (int i = 0; i < result.Length; i++)
+            {
+                result[i] = (byte)Random.Range(0, 7);
+            }
+            return result;
+        }
     }
 
     private void Update()
@@ -128,39 +142,6 @@ public class DropManager : MonoBehaviour
         grid.position = new Vector3(grid.position.x, Mathf.Repeat(transform.position.y - 0.5f, 1.0f) - 1, 0);
     }
 
-    private void OnFinishedPlay()
-    {
-        if (correctShape < 5.0f) { correctShape += 0.1f; }
-        else if (badShape < 5.0f) { badShape += 0.1f; }
-        else if (sideShape < 5.0f) { sideShape += 0.1f; }
-        else if (clearLine < 5.0f) { clearLine += 0.1f; }
-        else if (coverHole < 5.0f) { coverHole += 0.1f; }
-        else if (height < 5.0f)  { height += 0.1f; }
-        else
-        {
-            int[] r = res.ToArray();
-            float[][] rp = resParams.ToArray();
-            System.Array.Sort<int, float[]>(r, rp);
-            StreamWriter writer = new StreamWriter("Assets/data.txt");
-            for (int i = 0; i < r.Length; i++)
-            {
-                writer.WriteLine($"{r[i]} -> {string.Join(", ", rp[i])}");
-            }
-            writer.Close();
-            return; 
-        }
-
-        Debug.Log($"{game.MaxHeight} -> {correctShape}, {badShape}, {sideShape}, {clearLine}, {coverHole}, {height}");
-        res.Add(game.MaxHeight);
-        resParams.Add(new float[] { correctShape, badShape, sideShape, clearLine, coverHole, height });
-
-        if (playing != null)
-        {
-            StopCoroutine(playing);
-        }
-        Play();
-    }
-
     private IEnumerator Play(PieceDrop[] sequence)
     {
         int k = 0;
@@ -204,7 +185,7 @@ public class DropManager : MonoBehaviour
                 }
                 if (IsRowFull(y))
                 {
-                    //Debug.Log("CLEAR <color=red>" + y + "</color>");
+                    Debug.Log("CLEAR <color=red>" + y + "</color>");
                     // clear line y
                     for (int x = 0; x < 10; x++)
                     {
@@ -232,9 +213,8 @@ public class DropManager : MonoBehaviour
             score = Mathf.Max(score, MaxHeight);
         }
 
-        //Debug.Log("FINISHED with score: <color=yellow>" + score + "</color>");
-
-        OnFinishedPlay();
+        Debug.Log("FINISHED with score: <color=yellow>" + score + "</color>");
+        Debug.Log("FINISHED with score: <color=green>" + game.MaxHeight + "</color>");
     }
     private void Drop(PieceDrop drop, float points)
     {
