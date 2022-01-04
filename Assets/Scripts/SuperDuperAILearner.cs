@@ -13,18 +13,6 @@ public class SuperDuperAILearner : MonoBehaviour
     public float clearLine = 3.0f;
     public float height = -1.5f;
 
-    private float[][] param = new float[][] 
-    { 
-        new float[5] { 2, -3, 1.25f, 4, -1.5f },
-        new float[5] { 2, -3, 1.25f, 2, -1.5f },
-        new float[5] { 2, -2, 0.75f, 2, -2.0f },
-        new float[5] { 3, -2, 1.25f, 4, -2.0f },
-        new float[5] { 3, -4, 1.75f, 4, -1.5f },
-        new float[5] { 2, -2, 1.25f, 3, -1.5f },
-        new float[5] { 3, -3, 1.25f, 5, -2.0f },
-        new float[5] { 2, -3, 1.25f, 4, -1.0f }
-    };
-
     private Tetris game;
 
     private int fi = 1;
@@ -40,10 +28,19 @@ public class SuperDuperAILearner : MonoBehaviour
         {
             fi++;
         }
-        for (int i = 0; i < 48; i++)
+        /*float s = 0;
+        for (int i = 0; i < 100; i++)
+        {
+            game = new Tetris(InitSequence(), correctShape, badShape, sideShape, clearLine, height);
+            game.CalculateDrops();
+            Debug.Log(game.MaxHeight);
+            s += game.MaxHeight;
+        }
+        Debug.Log("AVG = " + (s / 100.0f));*/
+        /*for (int i = 0; i < 48; i++)
         {
             Simulate2(InitSequence());
-        }
+        }*/
     }
     private byte[] InitSequence()
     {

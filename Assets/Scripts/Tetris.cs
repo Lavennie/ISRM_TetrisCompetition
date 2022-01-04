@@ -58,11 +58,11 @@ public class Tetris
             new sbyte[] { 0, 0 }),
     };
 
-    public readonly float POINTS_CORRECT_SHAPE_MUL = 2.0f;
-    public readonly float POINTS_BAD_SHAPE_MUL = -5.0f;
-    public readonly float POINTS_SIDE_SHAPE_MUL = 0.25f;
-    public readonly float POINTS_CLEAR_LINE_MUL = 3.0f;
-    public readonly float POINTS_HEIGHT_MUL = -1.5f;
+    public readonly float POINTS_CORRECT_SHAPE_MUL = 2.5f;
+    public readonly float POINTS_BAD_SHAPE_MUL = -3.25f;
+    public readonly float POINTS_SIDE_SHAPE_MUL = 1.25f;
+    public readonly float POINTS_CLEAR_LINE_MUL = 3.75f;
+    public readonly float POINTS_HEIGHT_MUL = -2.5f;
 
     private byte[] sequence;
     public PieceDrop[] drops;
@@ -70,6 +70,8 @@ public class Tetris
     private int maxHeight = 0;
 
     private bool[,] map = new bool[10, 4001];
+
+    public static bool debug = false;
 
     public Tetris(byte[] sequence, float correctShapeMul, float badShapeMul, float sideShapeMul, float clearLineMul, float heightMul)
     {
@@ -139,12 +141,22 @@ public class Tetris
     {
         for (int i = 0; i < sequence.Length; i++)
         {
+            //debug = i == 317;
             //string debug = "";
             SimulatePiece(i, out byte x, out int y, out byte o, out float points);
+            if (debug)
+            {
+                string temp = "-> ";
+                for (byte z = 0; z < 10; z++)
+                {
+                    temp += GetHeight(z) + " ";
+                }
+                Debug.Log(i + ": " + o + " " + x + ", " + y);
+                Debug.Log(temp);
+            }
             //Debug.Log(sequence[i] + " (" + bestO + ") = " + bestPoints + " -> " + new Vector2Int(bestX, bestY));
             //Debug.Log(new Vector2Int(bestX, bestY) + " -> " + debug);
             Drop(i, o, x, y);
-            Debug.Log(i + ": " + o + " " + x + ", " + y);
         }
     }
     public void Drop(int i, byte o, byte x, int y)
@@ -167,7 +179,7 @@ public class Tetris
         {
             if (IsRowFull(r))
             {
-                Debug.Log("CLEAR " + r);
+                //Debug.Log("CLEAR " + r);
                 // clear line r
                 for (int rn = r + 1; rn < Mathf.Max(maxHeight, newMaxHeight); rn++)
                 {
@@ -226,19 +238,28 @@ public class Tetris
             dropY = Mathf.Max(GetHeight((byte)(x + c)) - piece.Min(c, o), dropY);
         }
 
+        string temp = "ROW: ";
         // add points for row clears
         for (int t = 0; t < 4; t++)
         {
             if (WillRowBeFull(dropY + t, p, o, x, dropY))
             {
                 points += POINTS_CLEAR_LINE_MUL;
+                temp += POINTS_CLEAR_LINE_MUL + " + ";
             }
         }
+        temp += "HEIGHT: ";
         // deduct points for higher height
         points += dropY * POINTS_HEIGHT_MUL;
+        temp += dropY * POINTS_HEIGHT_MUL + " + SHAPE: ";
         // add/deduct points for following shape (not leaving holes)
         points += piece.Points(this, x, dropY, o);
+        temp += piece.Points(this, x, dropY, o);
 
+        if (debug)
+        {
+            Debug.Log(p + ":" + x + ", " + dropY + " (" + o + ") " + points + " = " + temp);
+        }
 
         //Debug.Log("SIMULATE: " + new Vector2Int(x, dropY) + " " + points + " =   " + debug);
         return true;
@@ -311,6 +332,10 @@ public class TetrisPiece
     }
     public float Points(Tetris map, byte x, int y, byte o)
     {
+        if (Tetris.debug)
+        {
+            Debug.Log(ShapePointsBase(map, x, y, o) + " + " + ShapePointsSide(map, x, y, o));
+        }
         return ShapePointsBase(map, x, y, o) + ShapePointsSide(map, x, y, o);
     }
 

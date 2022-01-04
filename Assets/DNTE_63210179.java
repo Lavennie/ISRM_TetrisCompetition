@@ -5,14 +5,12 @@ public class DNTE_63210179 {
 	
 	public static void main(String[] args) {
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Test");
 		byte[] sequence = new byte[sc.nextShort()];
 		for (int i = 0; i < sequence.length; i++) {
 			sequence[i] = sc.nextByte();
 		}
 		Tetris tetris = new Tetris(sequence);
 		tetris.calculateDrops();
-		System.out.println(tetris.maxHeight);
 	}
 	
 	public static class Tetris {
@@ -36,15 +34,15 @@ public class DNTE_63210179 {
 				new byte[][] { new byte[] { 0, 0, 0 }, new byte[] { 0, 2 }, new byte[] { 1, 1, 0 }, new byte[] { 0, 0 } },
 				new byte[][] { new byte[] { 2, 1, 1 }, new byte[] { 3, 1 }, new byte[] { 1, 1, 2 }, new byte[] { 1, 3 } },
 				new byte[][] { new byte[] { 0, 0 }, new byte[] { 2 }, new byte[] { 0, -1 }, new byte[] { 0 } },
-				new byte[] { 0, -1, 0, 0 },
-				new byte[] { 0, 0, 0, 1 }),
+				new byte[] { 0, 0, 0, 0 },
+				new byte[] { 0, 0, 0, 0 }),
 			new Piece(
 				new byte[] { 0, 1, 2, 3 },
 				new byte[][] { new byte[] { 0, 0, 0 }, new byte[] { 0, 0 }, new byte[] { 0, 1, 1 }, new byte[] { 2, 0 } },
 				new byte[][] { new byte[] { 1, 1, 2 }, new byte[] { 3, 1 }, new byte[] { 2, 1, 1 }, new byte[] { 1, 3 } },
 				new byte[][] { new byte[] { 0, 0 }, new byte[] { 0 }, new byte[] { 1, 0 }, new byte[] { -2 } },
-				new byte[] { 0, -1, 0, 0 },
-				new byte[] { 0, 0, 0, 1 }),
+				new byte[] { 0, 0, 0, 0 },
+				new byte[] { 0, 0, 0, 0 }),
 			new Piece(
 				new byte[] { 0, 0, 0, 0 },
 				new byte[][] { new byte[] { 0, 0 } },
@@ -92,9 +90,8 @@ public class DNTE_63210179 {
 		public void calculateDrops() {
 			for (short i = 0; i < sequence.length; i++) {
 				SimulatePieceResult res = this.simulatePiece(i);
-				//System.out.println(res.getX() + ", " + res.getY() + " : " + res.getO());
 				this.drop(i, res.getX(), res.getY(), res.getO());
-				System.out.println(i + ": " + res.getO() + " " + res.getX() + ", " + res.getY());
+				System.out.println(res.getO() + " " + res.getX());
 			}
 		}
 		private void drop(short i, byte x, short y, byte o) {
@@ -110,7 +107,6 @@ public class DNTE_63210179 {
 			// clear rows
 			for (short my = y; my < newMaxHeight; my++) {
 				if (this.isRowFull(my)) {
-					System.out.println("CLEAR " + my);
 					// clear line my
 					for (short ny = (short)(my + 1); ny < Math.max(maxHeight, newMaxHeight); ny++) {
 						for (byte nx = 0; nx < 10; nx++) {
