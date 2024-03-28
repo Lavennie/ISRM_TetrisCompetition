@@ -181,7 +181,9 @@ public class DropManager : MonoBehaviour
                 if (loopCount > 10000)
                 {
                     Debug.LogError(new System.StackOverflowException("Reached loop repeat limit"));
+#if UNITY_EDITOR
                     UnityEditor.EditorApplication.isPlaying = false;
+#endif
                 }
                 if (IsRowFull(y))
                 {
